@@ -13,6 +13,10 @@ s2 = b.decode("utf-8")
 print(len(b2), type(b2)) 
 print(type(s2))  
 
+"""
+La longueur d'une chaine de caractères est plus grande ou égale à sa longueur en octets. Les chaines de caractères Python sont encodées en utf8 et chaque caractère peut avoir une longueur d'un ou plusieurs octets.
+"""
+
 #PARTIE3 
 """
 import socket
@@ -47,6 +51,8 @@ msg = Path("data/message.txt").read_text(encoding="utf-8").encode("utf-8")
 h = hashlib.sha256(msg).hexdigest()
 
 # Créer payload : message + séparateur + hash
+
+
 payload = msg + b"\x00" + h.encode("ascii")
 
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
@@ -54,3 +60,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
 
     data, _ = s.recvfrom(1024)
     print("Réponse serveur :", data.decode("utf-8"))
+
+"""
+Il manque la partie avec le nonce. Typiquement, on génère un nonce aléatoire puis on crée un hash du message et du nonce:
+h = hashlib.sha256(msg + nonce)
+On envoie le hash + le message + le nonce au serveur pour qu'il puisse vérifier l'intégrité du message
+Le nonce sert à empêcher une attaque de type replay (ou rejeu) où un message d'une requête précédente est intercepté et renvoyé ultérieurement par l'attaquant.
+"""
